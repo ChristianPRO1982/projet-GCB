@@ -45,8 +45,9 @@ Après avoir installé les dépendances, vous pouvez commencer à utiliser l'app
 
 ```bash
 python main.py
+```
 
-Tests
+## Tests
 
 Nous utilisons pytest pour tester notre application. Pour exécuter les tests, utilisez la commande suivante :
 
@@ -55,7 +56,9 @@ bash
 pytest
 
 Les tests utilisent le mocking pour simuler les interactions avec la BDD. Cela permet de tester la logique de l'application sans dépendre d'une base de données réelle.
-CI/CD
+
+
+## CI/CD
 
 Le pipeline de CI/CD est configuré à l'aide de GitHub Actions. Chaque commit déclenche une série de tâches automatisées, notamment :
 
@@ -66,7 +69,7 @@ Le pipeline de CI/CD est configuré à l'aide de GitHub Actions. Chaque commit d
 Le fichier de configuration pour GitHub Actions se trouve dans le répertoire .github/workflows.
 Contribuer
 
-Les contributions sont les bienvenues ! Pour contribuer :
+## Les contributions sont les bienvenues ! Pour contribuer :
 
     Forkez le dépôt
     Créez une branche pour votre fonctionnalité (git checkout -b feature/AmazingFeature)
@@ -74,11 +77,9 @@ Les contributions sont les bienvenues ! Pour contribuer :
     Poussez votre branche (git push origin feature/AmazingFeature)
     Ouvrez une Pull Request
 
-Licence
+## Licence
 
 Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
-
-mathematica
 
 
 N'hésitez pas à adapter ce README en fonction des spécificités et des détails de votre projet.
