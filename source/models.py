@@ -26,3 +26,4 @@ class Transaction(Base):
     timestamp      = Column(DateTime) # Date et heure de la transaction
 
     account = relationship("Account", back_populates="transactions")
+    
