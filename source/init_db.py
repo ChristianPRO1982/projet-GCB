@@ -2,6 +2,7 @@
 # https://www.youtube.com/watch?v=g0-7TrVCNtg
 
 from sqlalchemy import create_engine
+import os
 
 from models import Base
 
@@ -10,7 +11,7 @@ db_path = 'sqlite:///source/gcb.db'
 
 engine = create_engine(db_path)
 
-print()
+os.system('clear')
 print("--------------------------------------------------")
 try:
     
