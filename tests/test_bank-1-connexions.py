@@ -17,8 +17,3 @@ def test_disconnection():
     conn, session = bank.connection()
     bank.disconnection(conn, session)
     assert conn.closed, "The connection should be closed"
-
-
-####################
-### END DATABASE ###
-####################

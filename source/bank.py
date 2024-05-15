@@ -44,8 +44,12 @@ def deposit(session, account_id: str, amount:str, type: str)->int:
         return 2
     
     if Transactions(session).type_accept(type) == False:
-        print(f"Type doesn't exist: {type}")
+        print(f"Type doesn't accepted: {type}")
         return 3
+    
+    if Transactions(session).amount_accept(amount) == False:
+        print(f"Amout doesn't accepted: {amount}")
+        return 4
     
     
     transactions = Transactions(session)

@@ -16,13 +16,9 @@ def test_create_account():
     bank.disconnection(conn, session)
 
     session = AlchemyMagicMock()
-    assert bank.create_account(session, "10000"), "§1.1 create_account() failed"
+    assert bank.create_account(session, "10000"), "§2.1.1 create_account() failed"
 
     conn, session = bank.connection()
     nb_accounts_after = Accounts(session).count()
     bank.disconnection(conn, session)
-    assert nb_accounts_before == nb_accounts_after, "§1.2 create_account() failed"
-
-####################
-### END ACCOUNTS ###
-####################
+    assert nb_accounts_before == nb_accounts_after, "§2.1.2 create_account() failed"

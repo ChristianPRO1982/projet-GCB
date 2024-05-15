@@ -13,7 +13,3 @@ from source.models import Accounts, Account, Transactions, Transaction
 @pytest.mark.skip(reason="not developped")
 def test_transfer():
     pass
-
-#####################
-### END TRANSFERT ###
-#####################

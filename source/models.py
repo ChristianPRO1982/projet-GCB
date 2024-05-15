@@ -94,6 +94,22 @@ class Transactions():
         if type in ('deposit', 'withdraw', 'transfer'):
             return True
         return False
+        
+
+    def amount_accept(self, amount: str)->bool:
+        if amount.isdigit():
+            num = int(amount)
+            if num > 0:
+                return True
+            else:
+                return False
+        else:
+            try:
+                num = float(amount)
+            except:
+                return False
+            return False
+        return False
     
 
 class Transaction(Base):
