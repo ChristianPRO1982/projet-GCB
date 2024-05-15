@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from source.models import Accounts, Account, Transaction
+from source.models import Accounts, Account, Transactions, Transaction
 
 
 ################
@@ -29,24 +29,25 @@ def disconnection(conn, session):
 ### FUNCTIONS ###
 #################
 
-def create_account(session):
+def create_account(session, balance: str)->bool:
     accounts = Accounts(session)
-    accounts.create_account(balance="20000")
+    return accounts.create_account(balance=balance)
 
 
-def deposit(session):
+def deposit(session, account_id: str, amount:str, type: str)->bool:
+    transactions = Transactions(session)
+    return transactions.create_transaction(account_id=account_id, amount=amount, type=type)
+
+
+def withdraw(session, account_id: str, amount:str, type: str)->bool:
     pass
 
 
-def withdraw(session):
+def transfer(session, account_id: str, amount:str, type: str)->bool:
     pass
 
 
-def transfer(session):
-    pass
-
-
-def get_balance(session):
+def get_balance(session)->bool:
     pass
 
 #####################
