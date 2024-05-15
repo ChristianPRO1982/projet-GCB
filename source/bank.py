@@ -1,7 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from source.models import Accounts, Account, Transactions, Transaction
+try:
+    from models import Accounts, Account, Transactions, Transaction
+except:
+    from source.models import Accounts, Account, Transactions, Transaction
 
 
 ################
@@ -34,20 +37,33 @@ def create_account(session, balance: str)->bool:
     return accounts.create_account(balance=balance)
 
 
-def deposit(session, account_id: str, amount:str, type: str)->bool:
+def deposit(session, account_id: str, amount:str, type: str)->int:
+    # ARGS TESTS
+    if Accounts(session).account_exist(account_id) == False:
+        print(f"Account doesn't exist: {account_id}")
+        return 2
+    
+    if Transactions(session).type_accept(type) == False:
+        print(f"Type doesn't exist: {type}")
+        return 3
+    
+    
     transactions = Transactions(session)
-    return transactions.create_transaction(account_id=account_id, amount=amount, type=type)
+    if transactions.create_transaction(account_id=account_id, amount=amount, type=type):
+        return 0
+    else:
+        return 1
 
 
-def withdraw(session, account_id: str, amount:str, type: str)->bool:
+def withdraw(session, account_id: str, amount:str, type: str)->int:
     pass
 
 
-def transfer(session, account_id: str, amount:str, type: str)->bool:
+def transfer(session, account_id: str, amount:str, type: str)->int:
     pass
 
 
-def get_balance(session)->bool:
+def get_balance(session)->int:
     pass
 
 #####################

@@ -31,10 +31,18 @@ class Accounts():
 
             self.session.add(account)
             self.session.commit()
-            print('Compte créé')
+            print('Account created')
             return True
         except Exception as e:
             print(e)
+            return False
+        
+
+    def account_exist(self, account_id: str)->bool:
+        result = self.session.query(Account).filter(Account.account_id == account_id).count()
+        if result > 0:
+            return True
+        else:
             return False
 
 
@@ -47,9 +55,6 @@ class Account(Base):
     balance    = Column(Float) # Solde du compte
 
     transactions = relationship("Transaction", back_populates="account")
-
-    # def __init__(self, account_id):
-    #     pass
 
 
 ####################
@@ -78,12 +83,18 @@ class Transactions():
 
             self.session.add(transaction)
             self.session.commit()
-            print('Transaction créée')
+            print('Transaction OK')
             return True
         except Exception as e:
-            print(e)
+            print(f"Exception: {e}")
             return False
         
+
+    def type_accept(self, type: str)->bool:
+        if type in ('deposit', 'withdraw', 'transfer'):
+            return True
+        return False
+    
 
 class Transaction(Base):
 
