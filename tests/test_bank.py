@@ -1,20 +1,22 @@
 import pytest
 
-from source.bank import create_account, deposit, withdraw, transfer, get_balance
+import source.bank as bank
 
 
 ################
 ### DATABASE ###
 ################
 
-@pytest.mark.skip
 def test_connection():
-    pass
+    conn = bank.connection()
+    assert conn is not None
+    bank.disconnection(conn)
 
 
-@pytest.mark.skip
 def test_disconnection():
-    pass
+    conn = bank.connection()
+    bank.disconnection(conn)
+    assert conn.closed
 
 ####################
 ### END DATABASE ###
@@ -25,9 +27,8 @@ def test_disconnection():
 ### FUNCTIONS ###
 #################
 
-@pytest.mark.skip
 def test_create_account():
-    pass
+    assert False
 
 
 @pytest.mark.skip

@@ -1,11 +1,7 @@
+import pytest
 from sqlalchemy import create_engine
 
-from models import Base
-
-
-db_path = 'sqlite:///source/gcb.db'
-
-# engine = create_engine(db_path)
+from source.models import Account, Transaction
 
 
 ################
@@ -13,11 +9,13 @@ db_path = 'sqlite:///source/gcb.db'
 ################
 
 def connection():
-    pass
+    db_path = 'sqlite:///source/gcb.db'
+    engine = create_engine(db_path)
+    return engine.connect()
 
 
-def disconnection():
-    pass
+def disconnection(connection):
+    connection.close()
 
 ####################
 ### END DATABASE ###
@@ -28,23 +26,25 @@ def disconnection():
 ### FUNCTIONS ###
 #################
 
-def create_account():
+def create_account(conn):
+    account = Account(account_id="1", balance="10000")
+    conn.add(account)
+    conn.commit()
+
+
+def deposit(conn):
     pass
 
 
-def deposit():
+def withdraw(conn):
     pass
 
 
-def withdraw():
+def transfer(conn):
     pass
 
 
-def transfer():
-    pass
-
-
-def get_balance():
+def get_balance(conn):
     pass
 
 #####################
