@@ -1,7 +1,7 @@
-import pytest
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-from source.models import Account, Transaction
+from source.models import Accounts, Account, Transaction
 
 
 ################
@@ -11,11 +11,14 @@ from source.models import Account, Transaction
 def connection():
     db_path = 'sqlite:///source/gcb.db'
     engine = create_engine(db_path)
-    return engine.connect()
+    conn = engine.connect()
+    Session = sessionmaker(bind=conn)
+    return conn, Session()
 
 
-def disconnection(connection):
-    connection.close()
+def disconnection(conn, session):
+    session.close()
+    conn.close()
 
 ####################
 ### END DATABASE ###
@@ -26,25 +29,24 @@ def disconnection(connection):
 ### FUNCTIONS ###
 #################
 
-def create_account(conn):
-    account = Account(account_id="1", balance="10000")
-    conn.add(account)
-    conn.commit()
+def create_account(session):
+    accounts = Accounts(session)
+    accounts.create_account(balance="20000")
 
 
-def deposit(conn):
+def deposit(session):
     pass
 
 
-def withdraw(conn):
+def withdraw(session):
     pass
 
 
-def transfer(conn):
+def transfer(session):
     pass
 
 
-def get_balance(conn):
+def get_balance(session):
     pass
 
 #####################

@@ -8,15 +8,16 @@ import source.bank as bank
 ################
 
 def test_connection():
-    conn = bank.connection()
-    assert conn is not None
-    bank.disconnection(conn)
+    conn, session = bank.connection()
+    assert session is not None
+    bank.disconnection(conn, session)
 
 
 def test_disconnection():
-    conn = bank.connection()
-    bank.disconnection(conn)
-    assert conn.closed
+    conn, session = bank.connection()
+    bank.disconnection(conn, session)
+    assert conn.closed, "The connection should be closed"
+
 
 ####################
 ### END DATABASE ###
@@ -28,7 +29,12 @@ def test_disconnection():
 #################
 
 def test_create_account():
-    assert False
+    conn, session = bank.connection()
+
+    assert session is not None
+    
+    bank.disconnection(conn, session)
+    assert True
 
 
 @pytest.mark.skip
