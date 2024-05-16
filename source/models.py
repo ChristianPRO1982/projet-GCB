@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, declarative_base
+from unittest.mock import Mock
 
 
 Base = declarative_base() # tous nos modèles vont hériter de cette class de base
@@ -75,19 +76,99 @@ class Transactions():
         return len(self.transactions)
     
     
-    def create_transaction(self, account_id: str, amount:str, type: str)->bool:
+    def create_transaction(self, account_id_withdraw: str, account_id_deposit: str, amount:str, type: str)->int:
+        # ARGS TESTS
+        if account_id_withdraw.isdigit() == False:
+            print(f"Account doesn't exist: {account_id_withdraw}")
+            return 2
+        
+        if account_id_deposit.isdigit() == False:
+            print(f"Account doesn't exist: {account_id_withdraw}")
+            return 2
+        
+        account_id_withdraw_int = int(account_id_withdraw)
+        account_id_deposit_int = int(account_id_deposit)
+        match type:
+            case "deposit":
+                if account_id_withdraw_int != 1:
+                    return 5
+                if account_id_deposit_int < 3:
+                    return 6
+                
+            case "withdraw":
+                if account_id_withdraw_int < 3:
+                    return 7
+                if account_id_deposit_int != 2:
+                    return 8
+
+            case "transfer":
+                if account_id_withdraw_int < 3:
+                    return 9
+                if account_id_deposit_int < 3:
+                    return 10
+
+
+        if Accounts(self.session).account_exist(account_id_withdraw) == False:
+            print(f"Account doesn't exist: {account_id_withdraw}")
+            return 2
+        
+        if Accounts(self.session).account_exist(account_id_deposit) == False:
+            print(f"Account doesn't exist: {account_id_deposit}")
+            return 2
+        
+        if Transactions(self.session).type_accept(type) == False:
+            print(f"Type doesn't accepted: {type}")
+            return 3
+        
+        if Transactions(self.session).amount_accept(amount) == False:
+            print(f"Amout doesn't accepted: {amount}")
+            return 4
+        
+
+        #TRANSACTION
+        result = self.create_withdraw(account_id_withdraw, amount)
+        
+        if isinstance(result, Mock): return 0 # arrêt ici pour les tests unitaires
+        
+        if result == 0:
+            result = self.create_deposit(account_id_deposit, amount)
+            if result == 0:
+                self.session.commit()
+                return 0
+            else:
+                self.session.rollback()
+                return 1
+        else:
+            self.session.rollback()
+            return 1
+        
+
+    def create_withdraw(self, account_id_withdraw: str, amount:str)->int:
         try:
-            transaction = Transaction(account_id=account_id, amount=amount, type=type)
+            transaction = Transaction(account_id=account_id_withdraw, amount=amount, type="withdraw")
 
             # a = 0/0 # POUR TESTER UN BUG
 
             self.session.add(transaction)
-            self.session.commit()
-            print('Transaction OK')
-            return True
+            print('Transaction withdraw OK')
+            return 0
         except Exception as e:
             print(f"Exception: {e}")
-            return False
+            return 1
+        
+
+    def create_deposit(self, account_id_deposit: str, amount:str)->int:
+        try:
+            transaction = Transaction(account_id=account_id_deposit, amount=amount, type="deposit")
+
+            # a = 0/0 # POUR TESTER UN BUG
+
+            self.session.add(transaction)
+            print('Transaction deposit OK')
+            return 0
+        except Exception as e:
+            print(f"Exception: {e}")
+            return 1
         
 
     def type_accept(self, type: str)->bool:
@@ -102,14 +183,16 @@ class Transactions():
             if num > 0:
                 return True
             else:
+                print("zero or negatif")
                 return False
         else:
             try:
                 num = float(amount)
-            except:
+                print("not int but float")
                 return False
-            return False
-        return False
+            except:
+                print("not numeric")
+                return False
     
 
 class Transaction(Base):

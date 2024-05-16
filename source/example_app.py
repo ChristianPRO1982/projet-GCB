@@ -14,6 +14,8 @@ conn, session = bank.connection()
 
 print("Nombre de comptes", Accounts(session).count())
 
+if not bank.create_account(session, "0"): print("PAS DE COMPTE CREE")
+if not bank.create_account(session, "0"): print("PAS DE COMPTE CREE")
 if not bank.create_account(session, "10000"): print("PAS DE COMPTE CREE")
 if not bank.create_account(session, "5000"): print("PAS DE COMPTE CREE")
 
@@ -23,7 +25,8 @@ print("Nombre de comptes", Accounts(session).count())
 
 print("Nombre de transactions", Transactions(session).count())
 
-if not bank.deposit(session, "1", "50", "coco"): print("PAS DE TRANSACTION CREEE")
+result = Transactions(session).create_transaction("3", "4", "5000", "transfer")
+if result > 0: print(f"PAS DE TRANSACTION CREEE, result:{result}")
 
 print("Nombre de transactions", Transactions(session).count())
 
