@@ -1,11 +1,10 @@
 import pytest
-from mock_alchemy.mocking import AlchemyMagicMock
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 import source.bank as bank
-from source.models import Base, Accounts, Account, Transactions, Transaction
+from source.models import Base, Accounts, Account
 
 
 # Configuration de la base de données en mémoire pour les tests
@@ -83,4 +82,9 @@ def test_get_balance_ko_no_mock(account_id, balance):
 
 @pytest.mark.skip(reason="not developed")
 def test_function_not_developed():
+    assert True
+
+
+@pytest.mark.xfail(reason="test with bug")
+def test_function_crash():
     assert False
