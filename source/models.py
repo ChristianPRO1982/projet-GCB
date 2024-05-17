@@ -73,6 +73,13 @@ class Accounts():
             if self.accounts[account_id] is None:
                 self.accounts[account_id] = self.get_account_by_id(account_id)
 
+            # match case ne fonctionne que avec python 3.10
+            # match type:
+            #     case "withdraw":
+            #         self.accounts[account_id].balance -= amount
+            #     case "deposit":
+            #         self.accounts[account_id].balance += amount
+
             if type == "withdraw":
                 self.accounts[account_id].balance -= amount
             elif type == "deposit":
@@ -128,23 +135,44 @@ class Transactions():
         
         account_id_withdraw_int = int(account_id_withdraw)
         account_id_deposit_int = int(account_id_deposit)
+
+        # match case ne fonctionne que avec python 3.10
+        # match type:
+        #     case "deposit":
+        #         if account_id_withdraw_int != 1:
+        #             return 5
+        #         if account_id_deposit_int < 3:
+        #             return 6
+                
+        #     case "withdraw":
+        #         if account_id_withdraw_int < 3:
+        #             return 7
+        #         if account_id_deposit_int != 2:
+        #             return 8
+
+        #     case "transfer":
+        #         if account_id_withdraw_int < 3:
+        #             return 9
+        #         if account_id_deposit_int < 3:
+        #             return 10
+
         if type == "deposit":
             if account_id_withdraw_int != 1:
                 return 5
             if account_id_deposit_int < 3:
                 return 6
-        
-        elif type == "withdraw":
-            if account_id_withdraw_int < 3:
-                return 7
-            if account_id_deposit_int != 2:
-                return 8
+                
+        if type == "withdraw":
+                if account_id_withdraw_int < 3:
+                    return 7
+                if account_id_deposit_int != 2:
+                    return 8
 
-        elif type == "transfer":
-            if account_id_withdraw_int < 3:
-                return 9
-            if account_id_deposit_int < 3:
-                return 10
+        if type == "transfer":
+                if account_id_withdraw_int < 3:
+                    return 9
+                if account_id_deposit_int < 3:
+                    return 10
 
 
         if Accounts(self.session).account_exist(account_id_withdraw) == False:
