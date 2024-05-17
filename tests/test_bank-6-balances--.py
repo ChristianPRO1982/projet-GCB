@@ -1,31 +1,86 @@
 import pytest
 from mock_alchemy.mocking import AlchemyMagicMock
-from unittest.mock import patch
+from unittest.mock import patch, Mock
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 import source.bank as bank
-from source.models import Accounts, Account, Transactions, Transaction
+from source.models import Base, Accounts, Account, Transactions, Transaction
+
+
+# Configuration de la base de données en mémoire pour les tests
+engine = create_engine('sqlite:///:memory:')
+Session = sessionmaker(bind=engine)
+
+# Utilisez la session avec la base de données en mémoire
+session = Session()
+
+@pytest.fixture(scope='module', autouse=True)
+def setup_database():
+    Base.metadata.create_all(engine)
+    yield
+    Base.metadata.drop_all(engine)
 
 
 ###############
 ### BALANCE ###
 ###############
 
-@pytest.mark.skip(reason="in progress")
-@pytest.mark.parametrize(['account_id_withdraw', 'amount', 'Accounts_change_balance', 'error'],
+@patch.object(Accounts, 'get_account_by_id')
+@pytest.mark.parametrize(['account_id', 'balance'],
                          [
-                             ('5', '10000', True, 0),
+                             (0, 50),
+                             (1, 500),
+                             (2, 5000),
+                             (3, 50000),
+                             (10000, 500000),
                          ])
-def test_get_balance(account_id_withdraw, amount, Accounts_change_balance, error):
-    conn, session = bank.connection()
-    nb_transactions_before = Transactions(session).count()
-    bank.disconnection(conn, session)
+def test_get_balance_ok(mock_get_account_by_id, account_id, balance):
+    # Configurez le mock pour retourner un objet Account simulé
+    mock_account = Account(account_id=account_id, balance=balance)
+    mock_get_account_by_id.return_value = mock_account
 
-    with patch('source.models.Accounts.get_balance') as mock_get_balance:
-        mock_get_balance.side_effect = [50000]
-        session = AlchemyMagicMock()
-        assert Transactions.create_deposit(session, account_id_withdraw, amount) == error, "§6.1.1 deposit() failed"
+    accounts = Accounts(session)
 
-    conn, session = bank.connection()
-    nb_transactions_after = Transactions(session).count()
-    bank.disconnection(conn, session)
-    assert nb_transactions_before == nb_transactions_after, "§6.1.2 deposit() failed"
+    # Testez la méthode get_balance
+    assert accounts.get_balance(account_id, True) == balance, "§6.1.1 deposit() failed"
+    mock_get_account_by_id.assert_called_once_with(account_id)
+
+
+@patch.object(Accounts, 'get_account_by_id')
+@pytest.mark.parametrize(['account_id', 'balance'],
+                         [
+                             (0, 50),
+                             (1, 500),
+                             (2, 5000),
+                             (3, 50000),
+                             (10000, 500000),
+                         ])
+def test_get_balance_ok(mock_get_account_by_id, account_id, balance):
+    # Configurez le mock pour retourner un objet Account simulé
+    mock_account = Account(account_id=account_id, balance=balance)
+    mock_get_account_by_id.return_value = mock_account
+
+    accounts = Accounts(session)
+
+    # Testez la méthode get_balance
+    assert accounts.get_balance(account_id, True) == balance, "§6.1.1 deposit() failed"
+    mock_get_account_by_id.assert_called_once_with(account_id)
+
+
+@pytest.mark.parametrize(['account_id', 'balance'],
+                         [
+                             (0, 50),
+                             (1, 500),
+                             (2, 5000),
+                             (3, 50000),
+                             (10000, 500000),
+                         ])
+def test_get_balance_ko_no_mock(account_id, balance):
+    accounts = Accounts(session)
+    assert accounts.get_balance(account_id, False) == "-123456789", "§6.2.1 deposit() failed"
+
+
+@pytest.mark.skip(reason="not developed")
+def test_function_not_developed():
+    assert False
