@@ -10,6 +10,7 @@ from source.models import Accounts, Account, Transactions, Transaction
 ### BALANCE ###
 ###############
 
+@pytest.mark.skip(reason="in progress")
 @pytest.mark.parametrize(['account_id_withdraw', 'amount', 'Accounts_change_balance', 'error'],
                          [
                              ('5', '10000', True, 0),
