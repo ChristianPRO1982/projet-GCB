@@ -13,6 +13,7 @@ from source.models import Accounts, Account, Transactions, Transaction
 @pytest.mark.parametrize(['account_id_withdraw', 'amount', 'Accounts_change_balance', 'error'],
                          [
                              ('5', '10000', True, 0),
+                             ('5', '10000', True, 0),
                          ])
 def test_get_balance(account_id_withdraw, amount, Accounts_change_balance, error):
     conn, session = bank.connection()
