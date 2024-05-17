@@ -49,18 +49,24 @@ class Accounts():
             return False
         
 
-    def get_balance(self, account_id: str)->int:
+    def get_balance(self, account_id: str, account_mock:bool=False)->int:
         try:
+            # gestion des tests MOCK
+            if account_mock:
+                self.accounts[account_id] = None
+
             # object created ?
             if self.accounts[account_id] is None:
                 self.accounts[account_id] = self.get_account_by_id(account_id)
+
+            # a = 0/0 # POUR TESTER UN BUG
             
             return self.accounts[account_id].balance
         
         except Exception as e:
             print("Exception:", e)
             # traceback.print_exc()
-            return -123456789
+            return "-123456789"
 
     
     def get_account_by_id(self, account_id:str)->object:
