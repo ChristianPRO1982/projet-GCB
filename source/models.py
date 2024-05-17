@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.sql import func
 from unittest.mock import Mock
+import traceback
 
 
 Base = declarative_base() # tous nos modèles vont hériter de cette class de base
@@ -15,9 +17,9 @@ class Accounts():
 
         accounts_query = session.query(Account).all()
 
-        self.accounts = []
+        self.accounts = {}
         for account in accounts_query:
-            self.accounts.append(account.account_id)
+            self.accounts[account.account_id] = None
 
 
     def count(self):
@@ -45,6 +47,45 @@ class Accounts():
             return True
         else:
             return False
+        
+
+    def get_balance(self, account_id: str)->int:
+        try:
+            # object created ?
+            if self.accounts[account_id] is None:
+                self.accounts[account_id] = self.get_account_by_id(account_id)
+            
+            return self.accounts[account_id].balance
+        
+        except Exception as e:
+            print("Exception:", e)
+            # traceback.print_exc()
+            return -123456789
+
+    
+    def get_account_by_id(self, account_id:str)->object:
+        account = self.session.query(Account).filter(Account.account_id == account_id).first()
+        return account
+    
+
+    def change_balance(self, account_id:int, amount:int, type:str)->bool:
+        try:
+            if self.accounts[account_id] is None:
+                self.accounts[account_id] = self.get_account_by_id(account_id)
+
+            match type:
+                case "withdraw":
+                    self.accounts[account_id].balance -= amount
+                case "deposit":
+                    self.accounts[account_id].balance += amount
+            
+            return True
+
+        except Exception as e:
+            print("Exception:", e)
+            # traceback.print_exc()
+            return False
+
 
 
 # class gérant gérant qu'un seul utilisateur
@@ -137,35 +178,89 @@ class Transactions():
                 return 0
             else:
                 self.session.rollback()
-                return 1
+                return result
         else:
             self.session.rollback()
-            return 1
+            return result
         
 
     def create_withdraw(self, account_id_withdraw: str, amount:str)->int:
         try:
-            transaction = Transaction(account_id=account_id_withdraw, amount=amount, type="withdraw")
+            # ARGS TESTS
+            if amount.isdigit():
+                num = int(amount)
+                if num <= 0:
+                    print("zero or negatif")
+                    return 2
+            else:
+                try:
+                    num = float(amount)
+                    print("not int but float")
+                    return 3
+                except:
+                    print("not numeric")
+                    return 4
+                    
 
             # a = 0/0 # POUR TESTER UN BUG
 
+
+            #TRANSACTION
+
+            # test du solde
+            if int(account_id_withdraw) > 2:
+                balance = Accounts(self.session).get_balance(int(account_id_withdraw))
+                if balance < int(amount):
+                    print(f"Pas assez de fond monétaire : {balance}")
+                    return 5
+            
+            # modification du solde
+            if not Accounts(self.session).change_balance(int(account_id_withdraw), int(amount), "withdraw"):
+                return 6
+
+            transaction = Transaction(account_id=account_id_withdraw, amount=amount, type="withdraw")
             self.session.add(transaction)
             print('Transaction withdraw OK')
             return 0
+        
         except Exception as e:
             print(f"Exception: {e}")
+            # traceback.print_exc()
             return 1
         
 
     def create_deposit(self, account_id_deposit: str, amount:str)->int:
         try:
-            transaction = Transaction(account_id=account_id_deposit, amount=amount, type="deposit")
+            # ARGS TESTS
+            if amount.isdigit():
+                num = int(amount)
+                if num <= 0:
+                    print("zero or negatif")
+                    return 2
+            else:
+                try:
+                    num = float(amount)
+                    print("not int but float")
+                    return 3
+                except:
+                    print("not numeric")
+                    return 4
+                    
 
             # a = 0/0 # POUR TESTER UN BUG
 
+
+            #TRANSACTION
+            
+            # modification du solde
+            if not Accounts(self.session).change_balance(int(account_id_deposit), int(amount), "deposit"):
+                return 5
+
+            transaction = Transaction(account_id=account_id_deposit, amount=amount, type="deposit")
             self.session.add(transaction)
             print('Transaction deposit OK')
             return 0
+        
         except Exception as e:
             print(f"Exception: {e}")
             return 1
@@ -204,7 +299,7 @@ class Transaction(Base):
     # amount         = Column(Float) # Montant de la transaction
     amount         = Column(Integer) # Montant de la transaction -> pas de Float pour s'assurer de calcul juste (0.33 + 0.33 <> 0.66)
     type           = Column(String) # Type de la transaction (deposit, withdraw, transfer)
-    timestamp      = Column(DateTime) # Date et heure de la transaction
+    timestamp      = Column(DateTime, default=func.now()) # Date et heure de la transaction
 
     account = relationship("Account", back_populates="transactions")
-    
+
