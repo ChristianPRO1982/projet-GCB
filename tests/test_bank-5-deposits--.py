@@ -32,9 +32,9 @@ from source.models import Transactions
                              ('5', '$ 12.34', True, 4),
                              ('5', '$12', True, 4),
                              ('5', 'plein de tune', True, 4),
-                             ('5', '50001', True, 5),
-                             ('5', '100000000000', True, 5),
-                             ('5', '10000', False, 6),
+                             ('5', '50001', True, 0),
+                             ('5', '100000000000', True, 0),
+                             ('5', '10000', False, 5),
                          ])
 def test_deposit(account_id_withdraw, amount, Accounts_change_balance, error):
     conn, session = bank.connection()
@@ -46,9 +46,9 @@ def test_deposit(account_id_withdraw, amount, Accounts_change_balance, error):
         mock_get_balance.side_effect = [50000]
         mock_change_balance.side_effect = [Accounts_change_balance]
         session = AlchemyMagicMock()
-        assert Transactions.create_withdraw(session, account_id_withdraw, amount) == error, "§4.1.1 deposit() failed"
+        assert Transactions.create_deposit(session, account_id_withdraw, amount) == error, "§5.1.1 deposit() failed"
 
     conn, session = bank.connection()
     nb_transactions_after = Transactions(session).count()
     bank.disconnection(conn, session)
-    assert nb_transactions_before == nb_transactions_after, "§4.1.2 deposit() failed"
+    assert nb_transactions_before == nb_transactions_after, "§5.1.2 deposit() failed"
