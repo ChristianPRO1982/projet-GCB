@@ -12,9 +12,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2  # Régression vers la version 2 pour utiliser Node.js 12
+      - uses: actions/checkout@v3 # Mise à jour vers v3
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2  # Régression vers la version 2 pour utiliser Node.js 12
+        uses: actions/setup-python@v2.2.2 # Version compatible avec Node.js 20
         with:
           python-version: 3.8
       - name: Install dependencies
