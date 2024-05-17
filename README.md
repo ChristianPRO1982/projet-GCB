@@ -48,7 +48,8 @@ python main.py
 ```
 
 
-## Tests
+
+## Tests
 
 Nous utilisons pytest pour tester notre application. Pour exécuter les tests, utilisez la commande suivante :
 
