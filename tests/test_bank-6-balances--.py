@@ -85,6 +85,6 @@ def test_function_not_developed():
     assert True
 
 
-@pytest.mark.xfail(reason="not developed")
+@pytest.mark.xfail(reason="test with bug")
 def test_function_crash():
     assert False
