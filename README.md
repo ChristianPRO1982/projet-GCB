@@ -47,6 +47,7 @@ Après avoir installé les dépendances, vous pouvez commencer à utiliser l'app
 python main.py
 ```
 
+
 ## Tests
 
 Nous utilisons pytest pour tester notre application. Pour exécuter les tests, utilisez la commande suivante :
